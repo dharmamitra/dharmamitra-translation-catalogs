@@ -18,12 +18,14 @@ HTML=r"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>__TITLE__</titl
  #plot{width:100%;height:80vh}
 </style></head><body>
 <div id="bar"><h1>__TITLE__</h1>
-<div class="sub">each dot = one individual translation · X = year published · Y = doctrinal category · <b style="color:#278063">green</b> = full · <b style="color:#c0852b">orange</b> = partial · hover for details · drag to zoom
+<div class="sub">each dot = one individual translation · X = year published · Y = doctrinal category · <b style="color:#278063">green</b> = full · <b style="color:#c0852b">orange</b> = partial · dot size ≈ text length · hover for full title & author · drag to zoom
 <a class="nav" href="__OTHER__">↔ switch to __OTHERNAME__</a> <a class="nav" href="../index.html">home</a></div>
 <input id="search" placeholder="highlight a work, e.g. kośa, prasannapada, laṅkā…"><span id="count"></span></div>
 <div id="plot"></div>
 <script>
 const DATA=__DATA__;
+const MAXZ=Math.max(1,...DATA.map(d=>d.z||0));
+const dotsize=d=>5+28*Math.sqrt((d.z||0)/MAXZ);
 const order={};{let c={};DATA.forEach(d=>c[d.c]=(c[d.c]||0)+1);
  Object.keys(c).sort((a,b)=>c[a]-c[b]).forEach((k,i)=>order[k]=i);}
 const CATS=Object.keys(order).sort((a,b)=>order[a]-order[b]);
@@ -33,9 +35,10 @@ function traces(filter){
  return [["full","rgba(39,128,99,.80)"],["partial","rgba(192,133,43,.70)"]].map(([sc,col])=>{
   const pts=DATA.filter(d=>d.s===sc);
   return {name:sc+" ("+pts.length+")",x:pts.map(d=>d.xx),y:pts.map(d=>d.yy),mode:"markers",type:"scattergl",
-   text:pts.map(d=>`<b>${d.w}</b><br>${d.c} · ${d.y} · ${d.s}`),hoverinfo:"text",
-   marker:{size:8,color:pts.map(d=>(filter&&!d.w.toLowerCase().includes(filter))?"rgba(210,210,210,.18)":col),
-    line:{width:0.5,color:"#fff"}}};
+   text:pts.map(d=>`<b>${d.w}</b> · ${d.s}<br>${d.c} · ${d.y}`+(d.t?`<br>${d.t}`:"")+(d.a?`<br><i>${d.a}</i>`:"")+(d.z?`<br>~${Math.round(d.z/1000)}k chars`:"")),hoverinfo:"text",
+   marker:{size:pts.map(dotsize),sizemode:"diameter",
+    color:pts.map(d=>(filter&&!d.w.toLowerCase().includes(filter))?"rgba(210,210,210,.18)":col),
+    line:{width:0.5,color:"#fff"},opacity:0.78}};
  });
 }
 const lay={hovermode:"closest",margin:{l:140,r:20,t:10,b:40},
