@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Dharmamitra Translation Catalogs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+ body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#fafafa;color:#1d1d1f;line-height:1.6}
+ .wrap{max-width:860px;margin:0 auto;padding:40px 22px}
+ h1{font-size:28px;margin:0 0 4px} .sub{color:#777;font-size:15px;margin-bottom:28px}
+ .cards{display:flex;gap:18px;flex-wrap:wrap;margin:24px 0}
+ .card{flex:1;min-width:260px;background:#fff;border:1px solid #e3e3e3;border-radius:12px;padding:22px;
+   text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:.15s}
+ .card:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-2px);border-color:#2471A3}
+ .card h2{margin:0 0 6px;font-size:20px;color:#2471A3} .card .n{font-size:13px;color:#777}
+ .card .go{margin-top:12px;color:#2471A3;font-weight:600;font-size:14px}
+ code{background:#eef3f7;padding:1px 6px;border-radius:5px;font-size:13px}
+ footer{color:#888;font-size:13px;margin-top:30px;border-top:1px solid #e5e5e5;padding-top:16px}
+ a{color:#2471A3}
+</style></head><body><div class="wrap">
+<h1>Dharmamitra Translation Catalogs</h1>
+<div class="sub">Japanese &amp; English translations of classical Indian Buddhist works — mined from large scholarship corpora, stratified by doctrinal category.</div>
+
+<div class="cards">
+ <a class="card" href="viz/japanese.html">
+   <h2>日本語訳 · Japanese →</h2>
+   <div class="n">619 works · 332 with a full translation · 271 partial-only</div>
+   <div class="go">Open interactive visualization →</div></a>
+ <a class="card" href="viz/english.html">
+   <h2>English →</h2>
+   <div class="n">280 works · 205 with a full translation · 74 partial-only</div>
+   <div class="go">Open interactive visualization →</div></a>
+</div>
+
+<p>Each dot is a Buddhist work placed in its doctrinal/genre category (Madhyamaka, Yogācāra, Abhidharma,
+Prajñāpāramitā, Pramāṇa, Tathāgatagarbha, Mahāyāna-sūtra, Āgama-Nikāya, Vinaya, Tantra, Avadāna-Jātaka,
+Stotra-Kāvya). Dot size ∝ number of translations; <b style="color:#278063">green</b> = a full translation
+exists, <span style="color:#888">grey</span> = partial only; a ring marks works whose Sanskrit original is
+held in <code>dharmanexus-sanskrit</code>. Hover for details, search to highlight, toggle categories in the legend.</p>
+
+<p>Raw data: <a href="catalogs/japanese.tsv">catalogs/japanese.tsv</a> ·
+<a href="catalogs/english.tsv">catalogs/english.tsv</a>. Method &amp; caveats in the
+<a href="https://github.com/dharmamitra/dharmamitra-translation-catalogs">README</a>.</p>
+
+<footer>Mined with <code>gemini-3-flash-preview</code> from the dharmanexus modern-Japanese (~7,500 files)
+and buddhist-english-cleaned (~8,200 files) corpora · Sanskrit availability cross-referenced against
+dharmanexus-sanskrit · part of the <a href="https://dharmamitra.org">Dharmamitra</a> project.</footer>
+</div></body></html>
