@@ -9,8 +9,8 @@ category-stratified visualization for each.
 
 ```
 catalogs/
-  japanese.tsv / .json   619 works  (332 with a full translation, 271 partial-only)
-  english.tsv  / .json   280 works  (205 with a full translation,  74 partial-only)
+  japanese.tsv / .json   152 works · 577 individual translations on disk
+  english.tsv  / .json   261 works · 422 individual translations on disk
 viz/
   japanese.html          one interactive plot of ALL Japanese translations
   english.html           one interactive plot of ALL English translations
@@ -24,16 +24,13 @@ Open the `viz/*.html` files in a browser (Plotly is loaded from CDN).
 |---|---|
 | `work` | canonical romanized Sanskrit/Pāli title of the original |
 | `category` | doctrinal/genre class: Madhyamaka, Yogācāra, Abhidharma, Prajñāpāramitā, Pramāṇa, Tathāgatagarbha, Mahāyāna-sūtra, Āgama-Nikāya, Vinaya, Tantra, Avadāna-Jātaka, Stotra-Kāvya, Other |
-| `full` | count of **full**-text translations |
-| `partial` | count of **partial** (chapter/section/installment) translations |
+| `full_files` | number of distinct **full**-text translation files on disk |
+| `partial_files` | number of distinct **partial** translation files on disk |
 | `sanskrit_in_repo` | whether the Sanskrit original is present in `dharmanexus-sanskrit` |
 | `files_on_drive` | number of translation files located on disk |
 | `paths` | their file paths (`[full]`/`[partial]`-tagged) |
 
-For **Japanese**, `full`/`partial` are derived from citation frequency across the
-scholarship (a measure of translation activity); `paths` are the matched files in the
-dharmanexus modern-Japanese corpus. For **English**, the counts are file-based (the
-cleaned English corpus consists largely of the translations/editions themselves).
+Counts are **file-based**: `full_files`/`partial_files` = the number of distinct translation files on disk for that work. Work names are **canonicalized** (spelling/diacritic/spacing/suffix variants merged to one title) so each work is counted once.
 
 ## Visualization
 
