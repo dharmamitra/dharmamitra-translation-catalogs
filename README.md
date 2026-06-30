@@ -27,19 +27,17 @@ Open the `viz/*.html` files in a browser (Plotly is loaded from CDN).
 | `full_files` | number of distinct **full**-text translation files on disk |
 | `partial_files` | number of distinct **partial** translation files on disk |
 | `sanskrit_in_repo` | whether the Sanskrit original is present in `dharmanexus-sanskrit` |
-| `files_on_drive` | number of translation files located on disk |
-| `paths` | their file paths (`[full]`/`[partial]`-tagged) |
+| `paths` | the translation file paths (`[full]`/`[partial]`-tagged) |
 
 Counts are **file-based**: `full_files`/`partial_files` = the number of distinct translation files on disk for that work. Work names are **canonicalized** (spelling/diacritic/spacing/suffix variants merged to one title) so each work is counted once.
 
 ## Visualization
 
-Each dot is a work, placed in its category column and jittered within it
-(a "doctrinal stratification", analogous to the temporal stratification in
-`sanskrit-dating`). Dot **size** ∝ number of translations; **green** = a full
-translation exists, **grey** = partial only; **✦ / ringed** = Sanskrit original
-available in `dharmanexus-sanskrit`. Hover for details, search to highlight, click a
-legend category to toggle it.
+Each dot is **one individual translation**, positioned by **year published** (X axis)
+and **doctrinal category** (Y axis band), analogous to the temporal stratification in
+`sanskrit-dating`. **Green** = a full translation, **orange** = partial. Hover for the
+work / year / scope, type in the search box to highlight a work, drag to zoom, and use
+the legend to toggle full vs partial. (JA: 577 translations, EN: 422, spanning 1867–2019.)
 
 ## Sources & method
 
