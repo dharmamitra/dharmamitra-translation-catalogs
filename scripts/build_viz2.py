@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Rebuild the visualizations: X=year, Y=category band, one dot per individual
-translation, coloured full vs partial. Writes viz/{japanese,english}.html."""
+"""Visualizations: X=year, Y=doctrinal category band, one dot per individual
+translation (volumes/installments collapsed by translator), COLOUR = collection
+(text-type), filled=full / open=partial, dot size = total text length."""
 import os, json
 REPO=os.path.expanduser("~/data/dharmamitra-translation-catalogs")
 ja=json.load(open("/tmp/claude-1000/ja_points.json"))
@@ -18,46 +19,52 @@ HTML=r"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>__TITLE__</titl
  #plot{width:100%;height:80vh}
 </style></head><body>
 <div id="bar"><h1>__TITLE__</h1>
-<div class="sub">each dot = one individual translation · X = year published · Y = doctrinal category · <b style="color:#278063">green</b> = full · <b style="color:#c0852b">orange</b> = partial · dot size ≈ text length · hover for full title & author · drag to zoom
-<a class="nav" href="__OTHER__">↔ switch to __OTHERNAME__</a> <a class="nav" href="../index.html">home</a></div>
-<input id="search" placeholder="highlight a work, e.g. kośa, prasannapada, laṅkā…"><span id="count"></span></div>
+<div class="sub">each dot = one translation (volumes/installments merged by translator) · X = year · Y = doctrinal category · <b>colour = collection</b> · <b>●</b> full / <b>○</b> partial · dot size ≈ text length · hover for translator &amp; title
+<a class="nav" href="__OTHER__">↔ __OTHERNAME__</a> <a class="nav" href="../index.html">home</a></div>
+<input id="search" placeholder="highlight a work, e.g. madhyamaka, kośa, laṅkā…"><span id="count"></span></div>
 <div id="plot"></div>
 <script>
 const DATA=__DATA__;
 const MAXZ=Math.max(1,...DATA.map(d=>d.z||0));
-const dotsize=d=>5+28*Math.sqrt((d.z||0)/MAXZ);
-const order={};{let c={};DATA.forEach(d=>c[d.c]=(c[d.c]||0)+1);
- Object.keys(c).sort((a,b)=>c[a]-c[b]).forEach((k,i)=>order[k]=i);}
-const CATS=Object.keys(order).sort((a,b)=>order[a]-order[b]);
+const dotsize=d=>6+30*Math.sqrt((d.z||0)/MAXZ);
+// Y bands = categories (ordered by count)
+const cc={};DATA.forEach(d=>cc[d.c]=(cc[d.c]||0)+1);
+const CATS=Object.keys(cc).sort((a,b)=>cc[a]-cc[b]);const order={};CATS.forEach((c,i)=>order[c]=i);
+// colours = collections
+const COLS=[...new Set(DATA.map(d=>d.k))];
+const PAL={"Treatise (śāstra)":"#2471A3","Scripture (sūtra)":"#C0392B","Scripture (āgama/nikāya)":"#E67E22",
+ "Poetry / hymn":"#8E44AD","Narrative (avadāna/jātaka)":"#16A085","Tantra":"#B7950B","Vinaya":"#27AE60","Other":"#95A5A6"};
 function rng(s){let x=Math.sin(s*12.9898)*43758.5453;return x-Math.floor(x);}
-DATA.forEach((d,i)=>{d.yy=order[d.c]+(rng(i+1)-0.5)*0.7; d.xx=d.y+(rng(i+7)-0.5)*0.6;});
+DATA.forEach((d,i)=>{d.yy=order[d.c]+(rng(i+1)-0.5)*0.72; d.xx=d.y+(rng(i+7)-0.5)*0.7;});
 function traces(filter){
- return [["full","rgba(39,128,99,.80)"],["partial","rgba(192,133,43,.70)"]].map(([sc,col])=>{
-  const pts=DATA.filter(d=>d.s===sc);
-  return {name:sc+" ("+pts.length+")",x:pts.map(d=>d.xx),y:pts.map(d=>d.yy),mode:"markers",type:"scattergl",
-   text:pts.map(d=>`<b>${d.w}</b> · ${d.s}<br>${d.c} · ${d.y}`+(d.t?`<br>${d.t}`:"")+(d.a?`<br><i>${d.a}</i>`:"")+(d.z?`<br>~${Math.round(d.z/1000)}k chars`:"")),hoverinfo:"text",
+ return COLS.map(col=>{
+  const pts=DATA.filter(d=>d.k===col);
+  const dim=d=>filter&&!d.w.toLowerCase().includes(filter);
+  return {name:col+" ("+pts.length+")",x:pts.map(d=>d.xx),y:pts.map(d=>d.yy),mode:"markers",type:"scattergl",
+   text:pts.map(d=>`<b>${d.w}</b><br>${d.a||"?"} · ${d.y}${d.v>1?" · "+d.v+" vols/parts":""}<br>${d.c} · ${d.k} · ${d.s}${d.sk?" · Skt✦":""}<br>~${Math.round(d.z/1000)}k chars`),
+   hoverinfo:"text",
    marker:{size:pts.map(dotsize),sizemode:"diameter",
-    color:pts.map(d=>(filter&&!d.w.toLowerCase().includes(filter))?"rgba(210,210,210,.18)":col),
-    line:{width:0.5,color:"#fff"},opacity:0.78}};
+    symbol:pts.map(d=>d.s==="full"?"circle":"circle-open"),
+    color:pts.map(d=>dim(d)?"rgba(210,210,210,.13)":(PAL[col]||"#888")),
+    line:{width:pts.map(d=>d.s==="full"?0.5:1.6),color:pts.map(d=>dim(d)?"rgba(210,210,210,.2)":(PAL[col]||"#888"))},
+    opacity:0.85}};
  });
 }
-const lay={hovermode:"closest",margin:{l:140,r:20,t:10,b:40},
+const lay={hovermode:"closest",margin:{l:150,r:20,t:10,b:40},
  xaxis:{title:"year",zeroline:false,gridcolor:"#eee",dtick:20},
  yaxis:{tickmode:"array",tickvals:CATS.map(c=>order[c]),ticktext:CATS,zeroline:false,gridcolor:"#f0f0f0",range:[-0.6,CATS.length-0.4]},
- legend:{orientation:"h",y:1.04},paper_bgcolor:"#fafafa",plot_bgcolor:"#fff"};
+ legend:{orientation:"h",y:1.05,font:{size:11}},paper_bgcolor:"#fafafa",plot_bgcolor:"#fff"};
 Plotly.newPlot("plot",traces(""),lay,{responsive:true});
 const n=DATA.length,f=DATA.filter(d=>d.s==="full").length;
-document.getElementById("count").textContent=`${n} translations · ${f} full · ${n-f} partial`;
-document.getElementById("search").addEventListener("input",e=>{
- const q=e.target.value.trim().toLowerCase();
- Plotly.react("plot",traces(q),lay,{responsive:true});
- document.getElementById("count").textContent=q?`${DATA.filter(d=>d.w.toLowerCase().includes(q)).length} match "${q}"`:`${n} translations · ${f} full · ${n-f} partial`;
-});
+const setc=q=>document.getElementById("count").textContent=q?`${DATA.filter(d=>d.w.toLowerCase().includes(q)).length} match "${q}"`:`${n} translations · ${f} full · ${n-f} partial`;
+setc("");
+document.getElementById("search").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();Plotly.react("plot",traces(q),lay,{responsive:true});setc(q);});
 </script></body></html>"""
 def gen(pts,lang,title,other,othername):
     h=(HTML.replace("__TITLE__",title).replace("__DATA__",json.dumps(pts,ensure_ascii=False))
          .replace("__OTHER__",other).replace("__OTHERNAME__",othername))
     open(f"{REPO}/viz/{lang}.html","w",encoding="utf-8").write(h)
-gen(ja,"japanese",f"Japanese Translations of Buddhist Works — {len(ja)} translations, 1867–2019","english.html","English")
-gen(en,"english",f"English Translations of Buddhist Works — {len(en)} translations, 1867–2019","japanese.html","Japanese")
-print(f"JA viz: {len(ja)} dots | EN viz: {len(en)} dots")
+yrs=[p["y"] for p in ja+en]; span=f"{min(yrs)}–{max(yrs)}"
+gen(ja,"japanese",f"Japanese Translations of Buddhist Works — {len(ja)} translations, {span}","english.html","English")
+gen(en,"english",f"English Translations of Buddhist Works — {len(en)} translations, {span}","japanese.html","Japanese")
+print(f"JA viz: {len(ja)} | EN viz: {len(en)} | span {span}")

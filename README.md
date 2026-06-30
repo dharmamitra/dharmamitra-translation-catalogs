@@ -9,8 +9,8 @@ category-stratified visualization for each.
 
 ```
 catalogs/
-  japanese.tsv / .json   152 works · 577 individual translations on disk
-  english.tsv  / .json   261 works · 422 individual translations on disk
+  japanese.tsv / .json   145 works · 172 distinct translations
+  english.tsv  / .json   197 works · 348 distinct translations
 viz/
   japanese.html          one interactive plot of ALL Japanese translations
   english.html           one interactive plot of ALL English translations
